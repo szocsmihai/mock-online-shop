@@ -1,0 +1,2 @@
+1|ADMIN|admin@shop.com|P@ssW0rd|-|-|-
+2|SHOPPER|shopper@shop.com|P@ssW0rd|Shopper, Shoppington|0040700000000|Home
