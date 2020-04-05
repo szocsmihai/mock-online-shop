@@ -20,7 +20,7 @@ public class ShopperShopUI extends SwitchUI {
         }));
 
         this.uiOptions.add(new UIOption("4", "MANAGE ORDERS", () -> {
-            //TODO: Develop this.
+            new ShopperManageOrdersUI().start();
         }));
 
         this.uiOptions.add(new UIOption("0", "PREVIOUS MENU", () -> {
