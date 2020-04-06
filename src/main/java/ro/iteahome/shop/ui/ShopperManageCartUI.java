@@ -3,6 +3,7 @@ package ro.iteahome.shop.ui;
 import ro.iteahome.shop.exceptions.business.ShopEntryNotFoundException;
 import ro.iteahome.shop.exceptions.technical.ShopFileNotFoundException;
 import ro.iteahome.shop.model.Cart;
+import ro.iteahome.shop.model.Order;
 import ro.iteahome.shop.model.Product;
 import ro.iteahome.shop.security.UserContext;
 import ro.iteahome.shop.service.CartService;
@@ -30,23 +31,23 @@ public class ShopperManageCartUI extends LoopUI {
         this.setMenuTitle("CART MENU");
 
         this.uiOptions.add(new UIOption("1", "CONFIRM ORDER", () -> {
-            try {
+            if (!areCurrentUserBillingDetailsSet()) {
+                new ShopperGetDeliveryDetailsUI().start();
+            }
+            if (areCurrentUserBillingDetailsSet()) {
+                ShopperPaymentUI shopperPaymentUI = new ShopperPaymentUI();
+                shopperPaymentUI.start();
 
-                if (!areCurrentUserBillingDetailsSet()) {
-                    new ShopperGetDeliveryDetailsUI().start();
-                }
-                if (areCurrentUserBillingDetailsSet()) {
-                    new ShopperPaymentUI().start();
+                orderService.addNewOrder(
+                        UserContext.getLoggedInUser().getID(),
+                        Cart.content,
+                        Cart.getTotalCost(),
+                        shopperPaymentUI.selectedPaymentMethod);
 
-                    orderService.addNewOrder(UserContext.getLoggedInUser().getID(), Cart.content, Cart.getTotalCost());
-                    productService.updateDatabaseAfterOrderConfirmation();
-                    Cart.content.clear();
+                productService.updateDatabaseAfterOrderConfirmation();
+                Cart.content.clear();
 
-                    selectedOption = "0"; //close UI loop
-                }
-
-            } catch (ShopFileNotFoundException | ShopEntryNotFoundException e) {
-                e.printStackTrace();
+                selectedOption = "0"; //close UI loop
             }
         }));
 

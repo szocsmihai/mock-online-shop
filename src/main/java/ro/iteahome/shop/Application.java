@@ -6,13 +6,6 @@ public class Application {
 
     public static void main(String[] args) {
 
-//        try {
-//            new UserService().logIn("szocsmihai@gmail.com", "P@ssW0rd");
-//        } catch (ShopFileNotFoundException | ShopEntryNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//        new WIP_ShopperStartUI().start();
-
         System.out.println(
                 "\n" +
                         "----------------------------------------------------------------------------------------------------\n" +
@@ -30,6 +23,7 @@ public class Application {
         //TODO: Change collection manipulation to streams.
         //TODO: Optimize the argument types. "UIs spit Strings" doesn't mean they don't know any other type. UIs should indeed read String, but send something more specific to the services.
 
+        //TODO: Clean up entire program code. Make it sparkle.
         //TODO: Remove unused code at the very end of the exercise.
     }
 }

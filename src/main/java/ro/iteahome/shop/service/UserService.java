@@ -87,6 +87,10 @@ public class UserService {
         }
     }
 
+    public User findUserByEmail(String email) throws ShopFileNotFoundException, ShopEntryNotFoundException {
+        return userDAO.findUserByEmail(email);
+    }
+
     public boolean doCredentialsMatch(String email, String password) throws ShopFileNotFoundException, ShopEntryNotFoundException {
         User user = userDAO.findUserByEmail(email);
         String userPassword = user.getPassword();

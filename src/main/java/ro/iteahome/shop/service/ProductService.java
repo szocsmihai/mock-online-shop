@@ -48,7 +48,7 @@ public class ProductService {
         productDAO.updateProduct(currentProduct, newProduct);
     }
 
-    public void updateStockAndSoldUnits(String ID, String unitsSold) throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public void updateStockAndSoldUnits(String ID, String unitsSold) {
         Product currentProduct = productDAO.findProductByID(parseInt(ID));
         Product newProduct = new Product(
                 currentProduct.getID(),
@@ -61,7 +61,7 @@ public class ProductService {
         productDAO.updateProduct(currentProduct, newProduct);
     }
 
-    public void updateDatabaseAfterOrderConfirmation() throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public void updateDatabaseAfterOrderConfirmation() {
         for (Map.Entry<Product, Integer> pair : Cart.content.entrySet()) {
             updateStockAndSoldUnits(String.valueOf(pair.getKey().getID()), String.valueOf(pair.getValue()));
         }
@@ -101,7 +101,7 @@ public class ProductService {
         return popularProducts;
     }
 
-    public Product findProductByID(int ID) throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public Product findProductByID(int ID) {
         return productDAO.findProductByID(ID);
     }
 

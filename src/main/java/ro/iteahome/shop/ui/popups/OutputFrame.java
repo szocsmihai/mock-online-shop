@@ -28,9 +28,9 @@ public class OutputFrame {
         System.out.println("----------------------------------------------------------------------------------------------------");
     }
 
-    public static void printConfirmation(String INFO) {
+    public static void printConfirmation(String CONFIRMATION) {
         System.out.println("....................................................................................................");
-        System.out.println(INFO);
+        System.out.println(CONFIRMATION);
         System.out.println("....................................................................................................");
     }
 

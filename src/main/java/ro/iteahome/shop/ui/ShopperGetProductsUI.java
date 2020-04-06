@@ -50,24 +50,18 @@ public abstract class ShopperGetProductsUI extends LoopUI {
                 }
             }
 
-        } catch (ShopFileNotFoundException | ShopEntryNotFoundException | InterruptedException e) {
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
 
     private void showSelectProduct() {
-        try {
-
-            String userInput = InputFrame.getInputFromPrompt("SELECT A PRODUCT ID TO ADD IT TO YOUR CART (0 : CANCEL):");
-            while (!userInput.equals("0") && (!userInput.matches("\\d+") || !wasProductDisplayed(userInput))) {
-                userInput = InputFrame.getInputFromAlert("INVALID INPUT. TRY AGAIN (0 : CANCEL):");
-            }
-            if (!userInput.equals("0")) {
-                selectedProduct = productService.findProductByID(parseInt(userInput));
-            }
-
-        } catch (ShopFileNotFoundException | ShopEntryNotFoundException e) {
-            e.printStackTrace();
+        String userInput = InputFrame.getInputFromPrompt("SELECT A PRODUCT ID TO ADD IT TO YOUR CART (0 : CANCEL):");
+        while (!userInput.equals("0") && (!userInput.matches("\\d+") || !wasProductDisplayed(userInput))) {
+            userInput = InputFrame.getInputFromAlert("INVALID INPUT. TRY AGAIN (0 : CANCEL):");
+        }
+        if (!userInput.equals("0")) {
+            selectedProduct = productService.findProductByID(parseInt(userInput));
         }
     }
 

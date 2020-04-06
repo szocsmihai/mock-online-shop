@@ -3,6 +3,7 @@ package ro.iteahome.shop.dao;
 import ro.iteahome.shop.exceptions.business.ShopEntryNotFoundException;
 import ro.iteahome.shop.exceptions.technical.ShopFileNotFoundException;
 import ro.iteahome.shop.model.User;
+import ro.iteahome.shop.ui.popups.OutputFrame;
 
 import java.util.ArrayList;
 import java.util.function.Function;
@@ -47,9 +48,15 @@ public class UserDAO {
      * Methods that write to the User database:
      */
 
-    public void addNewUser(User user) throws ShopFileNotFoundException {
-        user.setID(fileUtil.getSequence(DATABASE_SEQUENCE_PATH) + 1);
-        fileUtil.addNewEntry(DATABASE_PATH, DATABASE_SEQUENCE_PATH, user);
+    public void addNewUser(User user) {
+        try {
+
+            user.setID(fileUtil.getSequence(DATABASE_SEQUENCE_PATH) + 1);
+            fileUtil.addNewEntry(DATABASE_PATH, DATABASE_SEQUENCE_PATH, user);
+
+        } catch (ShopEntryNotFoundException e) {
+            OutputFrame.printAlert(e.getMessage());
+        }
     }
 
     public void updateUser(User targetUser, User newUser) throws ShopFileNotFoundException, ShopEntryNotFoundException {

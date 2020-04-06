@@ -2,7 +2,7 @@ package ro.iteahome.shop.model;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class Order extends WritableToDatabase {
@@ -10,17 +10,24 @@ public class Order extends WritableToDatabase {
     //order ID is initialized by the WritableToDatabase class as -1 by default;
     private String confirmationDate;
     private int userID;
-    private HashMap<Product, Integer> products;
+    private LinkedHashMap<Product, Integer> products;
     private float totalPrice;
     private String currency = Product.CURRENCY;
-    private status currentStatus;
+    private PaymentMethod paymentMethod;
+    private Status currentStatus;
 
-    public enum status {
-        NOT_DELIVERED,
-        DELIVERED
+    public enum PaymentMethod { //TODO: include this in payment logic.
+        ON_DELIVERY,
+        ONLINE
     }
 
-    private String productsToString() {
+    public enum Status {
+        NOT_DELIVERED,
+        DELIVERED,
+        CANCELLED
+    }
+
+    public String productsToEncodedString() {
         StringBuilder productsBuilder = new StringBuilder();
         for (Map.Entry<Product, Integer> pair : products.entrySet()) {
             productsBuilder.append(pair.getKey().getID()).append("-").append(pair.getValue()).append("_");
@@ -30,37 +37,35 @@ public class Order extends WritableToDatabase {
 
     @Override
     public String toDatabaseString() {
-        return ID + "|" + confirmationDate + "|" + userID + "|" + productsToString() + "|" + totalPrice + "|" + currency + "|" + currentStatus;
+        return ID + "|" + confirmationDate + "|" + userID + "|" + productsToEncodedString() + "|" + totalPrice + "|" + currency + "|" + paymentMethod + "|" + currentStatus;
     }
 
     /**
      * Constructor for adding new Orders to the database:
      */
-    public Order(int userID, HashMap<Product, Integer> products, float totalPrice) {
+    public Order(int userID, LinkedHashMap<Product, Integer> products, float totalPrice, PaymentMethod paymentMethod) {
         //order ID is updated automatically upon writing to database.
         this.confirmationDate = new SimpleDateFormat("yyyy.MM.dd-HH:mm:ss").format(new Date());
         this.userID = userID;
         this.products = products;
         this.totalPrice = totalPrice;
         //currency is read from the Product class;
-        this.currentStatus = status.NOT_DELIVERED;
+        this.paymentMethod = paymentMethod;
+        this.currentStatus = Status.NOT_DELIVERED;
     }
 
     /**
      * Constructor reading/updating Orders in the database:
      */
-    public Order(int ID, String confirmationDate, int userID, HashMap<Product, Integer> products, float totalPrice, status currentStatus) {
+    public Order(int ID, String confirmationDate, int userID, LinkedHashMap<Product, Integer> products, float totalPrice, PaymentMethod paymentMethod, Status currentStatus) {
         this.ID = ID;
         this.confirmationDate = confirmationDate;
         this.userID = userID;
         this.products = products;
         this.totalPrice = totalPrice;
         //currency is read from the Product class;
+        this.paymentMethod = paymentMethod;
         this.currentStatus = currentStatus;
-    }
-
-    public String getProductsAsString() {
-        return productsToString();
     }
 
     public String getConfirmationDate() {
@@ -71,11 +76,11 @@ public class Order extends WritableToDatabase {
         return userID;
     }
 
-    public HashMap<Product, Integer> getProducts() {
+    public LinkedHashMap<Product, Integer> getProducts() {
         return products;
     }
 
-    public void setProducts(HashMap<Product, Integer> products) {
+    public void setProducts(LinkedHashMap<Product, Integer> products) {
         this.products = products;
     }
 
@@ -87,11 +92,11 @@ public class Order extends WritableToDatabase {
         this.totalPrice = totalPrice;
     }
 
-    public status getCurrentStatus() {
+    public Status getCurrentStatus() {
         return currentStatus;
     }
 
-    public void setCurrentStatus(status currentStatus) {
+    public void setCurrentStatus(Status currentStatus) {
         this.currentStatus = currentStatus;
     }
 }

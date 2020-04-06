@@ -6,4 +6,8 @@ public class ShopBusinessException extends ShopGeneralException {
 
     public ShopBusinessException() {
     }
+
+    public ShopBusinessException(String message) {
+        super(message);
+    }
 }

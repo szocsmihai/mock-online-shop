@@ -3,6 +3,7 @@ package ro.iteahome.shop.dao;
 import ro.iteahome.shop.exceptions.business.ShopEntryNotFoundException;
 import ro.iteahome.shop.exceptions.technical.ShopFileNotFoundException;
 import ro.iteahome.shop.model.WritableToDatabase;
+import ro.iteahome.shop.ui.popups.OutputFrame;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -27,10 +28,10 @@ class FileUtil<Entry extends WritableToDatabase> {
      * - a method to construct entries from the database lines (more specifically, from the array of line tokens
      * representing the entry properties).
      */
-    ArrayList<Entry> getAllEntries(String databasePath, Function<String[], Entry> arrayToEntry) throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    ArrayList<Entry> getAllEntries(String databasePath, Function<String[], Entry> arrayToEntry) throws ShopEntryNotFoundException {
+        ArrayList<Entry> fileEntries = new ArrayList<>();
         try (Scanner fileScanner = new Scanner(new File(databasePath))) {
 
-            ArrayList<Entry> fileEntries = new ArrayList<>();
             while (fileScanner.hasNextLine()) {
                 String entryLine = fileScanner.nextLine();
                 String[] entryProperties = entryLine.split("\\|");
@@ -39,11 +40,14 @@ class FileUtil<Entry extends WritableToDatabase> {
                     fileEntries.add(entry);
                 }
             }
-            if (fileEntries.size() == 0) throw new ShopEntryNotFoundException();
-            else return fileEntries;
 
         } catch (FileNotFoundException e) {
-            throw new ShopFileNotFoundException();
+            OutputFrame.printAlert("DATABASE NOT ACCESSIBLE.");
+        }
+        if (fileEntries.isEmpty()) {
+            throw new ShopEntryNotFoundException();
+        } else {
+            return fileEntries;
         }
     }
 
@@ -61,10 +65,10 @@ class FileUtil<Entry extends WritableToDatabase> {
      * - a method to construct Entry objects from the database text lines (more specifically, from the array of line
      * tokens representing the entry properties).
      */
-    Entry findFirstEntryByProperty(String databasePath, int propertyIndex, String value, Function<String[], Entry> arrayToEntry) throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    Entry findFirstEntryByProperty(String databasePath, int propertyIndex, String value, Function<String[], Entry> arrayToEntry) throws ShopEntryNotFoundException {
+        Entry entry = null;
         try (Scanner fileScanner = new Scanner(new File(databasePath))) {
 
-            Entry entry = null;
             while (fileScanner.hasNextLine()) {
                 String entryLine = fileScanner.nextLine();
                 String[] entryProperties = entryLine.split("\\|");
@@ -74,11 +78,14 @@ class FileUtil<Entry extends WritableToDatabase> {
                     break;
                 }
             }
-            if (entry == null) throw new ShopEntryNotFoundException();
-            else return entry;
 
         } catch (FileNotFoundException e) {
-            throw new ShopFileNotFoundException();
+            OutputFrame.printAlert("DATABASE NOT ACCESSIBLE.");
+        }
+        if (entry == null) {
+            throw new ShopEntryNotFoundException();
+        } else {
+            return entry;
         }
     }
 
@@ -96,10 +103,10 @@ class FileUtil<Entry extends WritableToDatabase> {
      * - a method to construct Entry objects from the database text lines (more specifically, from the array of line
      * tokens representing the entry properties).
      */
-    ArrayList<Entry> findEntriesByProperty(String databasePath, int propertyIndex, String value, Function<String[], Entry> arrayToEntry) throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    ArrayList<Entry> findEntriesByProperty(String databasePath, int propertyIndex, String value, Function<String[], Entry> arrayToEntry) throws ShopEntryNotFoundException {
+        ArrayList<Entry> entries = new ArrayList<>();
         try (Scanner fileScanner = new Scanner(new File(databasePath))) {
 
-            ArrayList<Entry> entries = new ArrayList<>();
             while (fileScanner.hasNextLine()) {
                 String entryLine = fileScanner.nextLine();
                 String[] entryProperties = entryLine.split("\\|");
@@ -108,11 +115,14 @@ class FileUtil<Entry extends WritableToDatabase> {
                     entries.add(arrayToEntry.apply(entryProperties));
                 }
             }
-            if (entries.size() == 0) throw new ShopEntryNotFoundException();
-            else return entries;
 
         } catch (FileNotFoundException e) {
-            throw new ShopFileNotFoundException();
+            OutputFrame.printAlert("DATABASE NOT ACCESSIBLE.");
+        }
+        if (entries.isEmpty()) {
+            throw new ShopEntryNotFoundException();
+        } else {
+            return entries;
         }
     }
 
@@ -131,10 +141,10 @@ class FileUtil<Entry extends WritableToDatabase> {
      * - a method to construct Entry objects from the database text lines (more specifically, from the array of line
      * tokens representing the entry properties).
      */
-    ArrayList<Entry> findPossibleEntries(String databasePath, int propertyIndex, String pattern, Function<String[], Entry> arrayToEntry) throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    ArrayList<Entry> findPossibleEntries(String databasePath, int propertyIndex, String pattern, Function<String[], Entry> arrayToEntry) throws ShopEntryNotFoundException {
+        ArrayList<Entry> targetEntries = new ArrayList<>();
         try (Scanner fileScanner = new Scanner(new File(databasePath))) {
 
-            ArrayList<Entry> targetEntries = new ArrayList<>();
             while (fileScanner.hasNextLine()) {
                 String entryLine = fileScanner.nextLine();
                 String[] entryProperties = entryLine.split("\\|");
@@ -148,11 +158,14 @@ class FileUtil<Entry extends WritableToDatabase> {
                     targetEntries.add(entry);
                 }
             }
-            if (targetEntries.size() == 0) throw new ShopEntryNotFoundException();
-            else return targetEntries;
 
         } catch (FileNotFoundException e) {
-            throw new ShopFileNotFoundException();
+            OutputFrame.printAlert("DATABASE NOT ACCESSIBLE.");
+        }
+        if (targetEntries.isEmpty()) {
+            throw new ShopEntryNotFoundException();
+        } else {
+            return targetEntries;
         }
     }
 
@@ -169,7 +182,7 @@ class FileUtil<Entry extends WritableToDatabase> {
      * - a database sequence path ({@code String});
      * - an Entry object, to be converted into a string that will be written to the database.
      */
-    void addNewEntry(String databasePath, String databaseSequencePath, Entry entry) throws ShopFileNotFoundException {
+    void addNewEntry(String databasePath, String databaseSequencePath, Entry entry) {
         try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(databasePath, true))) {
 
             fileWriter.append(entry.toDatabaseString());
@@ -177,7 +190,7 @@ class FileUtil<Entry extends WritableToDatabase> {
             updateSequence(databaseSequencePath, entry.getID());
 
         } catch (IOException e) {
-            throw new ShopFileNotFoundException();
+            OutputFrame.printAlert("DATABASE NOT ACCESSIBLE.");
         }
     }
 
@@ -188,13 +201,13 @@ class FileUtil<Entry extends WritableToDatabase> {
      * <p>
      * - a database sequence path ({@code String});
      */
-    private void updateSequence(String databaseSequencePath, int newID) throws ShopFileNotFoundException {
+    private void updateSequence(String databaseSequencePath, int newID) {
         try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(databaseSequencePath, false))) {
 
             fileWriter.append(String.valueOf(newID));
 
         } catch (IOException e) {
-            throw new ShopFileNotFoundException();
+            OutputFrame.printAlert("DATABASE NOT ACCESSIBLE.");
         }
     }
 
@@ -205,13 +218,19 @@ class FileUtil<Entry extends WritableToDatabase> {
      * <p>
      * - a database sequence path ({@code String});
      */
-    int getSequence(String databaseSequencePath) throws ShopFileNotFoundException {
+    int getSequence(String databaseSequencePath) throws ShopEntryNotFoundException {
+        int sequence = -1;
         try (Scanner fileScanner = new Scanner(new File(databaseSequencePath))) {
 
-            return fileScanner.nextInt();
+            sequence = fileScanner.nextInt();
 
         } catch (FileNotFoundException e) {
-            throw new ShopFileNotFoundException();
+            OutputFrame.printAlert("DATABASE NOT ACCESSIBLE.");
+        }
+        if (sequence == -1) {
+            throw new ShopEntryNotFoundException("DATABASE SEQUENCE NOT ACCESSIBLE.");
+        } else {
+            return sequence;
         }
     }
 
@@ -226,7 +245,7 @@ class FileUtil<Entry extends WritableToDatabase> {
      * - a method to construct Entry objects from the database text lines (more specifically, from the array of line
      * tokens representing the entry properties).
      */
-    void updateEntry(String databasePath, Entry targetEntry, Entry newEntry, Function<String[], Entry> arrayToEntry) throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    void updateEntry(String databasePath, Entry targetEntry, Entry newEntry, Function<String[], Entry> arrayToEntry) throws ShopEntryNotFoundException {
         ArrayList<Entry> fileEntries = getAllEntries(databasePath, arrayToEntry);
         boolean entryFound = false;
         for (Entry entry : fileEntries) {
@@ -237,7 +256,9 @@ class FileUtil<Entry extends WritableToDatabase> {
                 break;
             }
         }
-        if (!entryFound) throw new ShopEntryNotFoundException();
+        if (!entryFound) {
+            throw new ShopEntryNotFoundException();
+        }
     }
 
     /**
@@ -252,7 +273,7 @@ class FileUtil<Entry extends WritableToDatabase> {
      * - a method to construct Entry objects from the database text lines (more specifically, from the array of line
      * tokens representing the entry properties).
      */
-    void removeEntry(String databasePath, Entry targetEntry, Function<String[], Entry> arrayToEntry) throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    void removeEntry(String databasePath, Entry targetEntry, Function<String[], Entry> arrayToEntry) throws ShopEntryNotFoundException {
         ArrayList<Entry> fileEntries = getAllEntries(databasePath, arrayToEntry);
         boolean entryFound = false;
         for (Entry entry : fileEntries) {
@@ -263,7 +284,9 @@ class FileUtil<Entry extends WritableToDatabase> {
                 break;
             }
         }
-        if (!entryFound) throw new ShopEntryNotFoundException();
+        if (!entryFound) {
+            throw new ShopEntryNotFoundException();
+        }
     }
 
     /**
@@ -275,26 +298,28 @@ class FileUtil<Entry extends WritableToDatabase> {
      * - a database path ({@code String});
      * - the index ({@code int}) of the targeted property within the array of line properties;
      */
-    ArrayList<String> getSortedPropertyValues(String databasePath, int propertyIndex) throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    ArrayList<String> getSortedPropertyValues(String databasePath, int propertyIndex) throws ShopEntryNotFoundException {
+        ArrayList<String> values = new ArrayList<>();
         try (Scanner fileScanner = new Scanner(new File(databasePath))) {
 
-            HashSet<String> unsortedValues = new HashSet<>();
+            HashSet<String> valueSet = new HashSet<>();
             while (fileScanner.hasNextLine()) {
                 String entryLine = fileScanner.nextLine();
                 String[] entryProperties = entryLine.split("\\|");
                 String targetProperty = entryProperties[propertyIndex];
-                unsortedValues.add(targetProperty);
+                valueSet.add(targetProperty);
             }
-            if (unsortedValues.size() == 0) throw new ShopEntryNotFoundException();
-            else {
-                ArrayList<String> sortedValues = new ArrayList<>(unsortedValues);
-                Collections.sort(sortedValues);
-                return sortedValues;
+            if (valueSet.isEmpty()) {
+                throw new ShopEntryNotFoundException();
+            } else {
+                values.addAll(valueSet);
+                Collections.sort(values);
             }
 
         } catch (FileNotFoundException e) {
-            throw new ShopFileNotFoundException();
+            OutputFrame.printAlert("DATABASE NOT ACCESSIBLE.");
         }
+        return values;
     }
 
     /**
@@ -306,7 +331,7 @@ class FileUtil<Entry extends WritableToDatabase> {
      * - a database path ({@code String});
      * - an ArrayList of Entries to become the new content.
      */
-    private void overwriteDatabase(String databasePath, ArrayList<Entry> entries) throws ShopFileNotFoundException {
+    private void overwriteDatabase(String databasePath, ArrayList<Entry> entries) {
         try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(databasePath, false))) {
 
             StringBuilder entriesBuilder = new StringBuilder();
@@ -316,7 +341,7 @@ class FileUtil<Entry extends WritableToDatabase> {
             fileWriter.write(entriesBuilder.toString());
 
         } catch (IOException e) {
-            throw new ShopFileNotFoundException();
+            OutputFrame.printAlert("DATABASE NOT ACCESSIBLE.");
         }
     }
 }

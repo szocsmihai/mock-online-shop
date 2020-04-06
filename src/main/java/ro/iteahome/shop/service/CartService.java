@@ -15,7 +15,7 @@ public class CartService {
 
     private ProductService productService = new ProductService();
 
-    public void addProductToCart(String ID, String quantity) throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public void addProductToCart(String ID, String quantity) {
         Product product = productService.findProductByID(parseInt(ID));
         if (Cart.content.isEmpty()) {
             Cart.content.put(product, parseInt(quantity));
