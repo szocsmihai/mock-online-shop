@@ -1,7 +1,6 @@
 package ro.iteahome.shop.dao;
 
 import ro.iteahome.shop.exceptions.business.ShopEntryNotFoundException;
-import ro.iteahome.shop.exceptions.technical.ShopFileNotFoundException;
 import ro.iteahome.shop.model.Order;
 import ro.iteahome.shop.model.Product;
 import ro.iteahome.shop.service.ProductService;
@@ -57,14 +56,6 @@ public class OrderDAO {
         }
     }
 
-    public void updateOrder(Order oldOrder, Order newOrder) throws ShopFileNotFoundException, ShopEntryNotFoundException {
-        fileUtil.updateEntry(DATABASE_PATH, oldOrder, newOrder, constructOrder);
-    }
-
-    public void removeOrder(Order targetOrder) throws ShopFileNotFoundException, ShopEntryNotFoundException {
-        fileUtil.removeEntry(DATABASE_PATH, targetOrder, constructOrder);
-    }
-
     /**
      * Methods that read the Order database:
      * <p>
@@ -74,8 +65,16 @@ public class OrderDAO {
      * product quantities and specific markers for separating this information.
      */
 
-    public ArrayList<Order> getAllOrders() throws ShopFileNotFoundException, ShopEntryNotFoundException {
-        return fileUtil.getAllEntries(DATABASE_PATH, constructOrder);
+    public ArrayList<Order> getAllOrders() {
+        ArrayList<Order> orders = new ArrayList<>();
+        try {
+
+            orders = fileUtil.getAllEntries(DATABASE_PATH, constructOrder);
+
+        } catch (ShopEntryNotFoundException e) {
+            OutputFrame.printAlert("ORDERS NOT FOUND.");
+        }
+        return orders;
     }
 
     public Order findOrderByID(int ID) {
@@ -107,19 +106,25 @@ public class OrderDAO {
         String[] productProperties = encodedString.split("_");
         for (String pair : productProperties) {
             String[] productIDAndQuantity = pair.split("-");
-            orderProductsAndQuantities.put(productService.findProductByID(parseInt(productIDAndQuantity[0])), parseInt(productIDAndQuantity[1]));
+            String productID = productIDAndQuantity[0];
+            String quantity = productIDAndQuantity[1];
+            Product product = productService.findProductByID(parseInt(productID));
+            orderProductsAndQuantities.put(product, parseInt(quantity));
         }
         return orderProductsAndQuantities;
     }
 
-    public LinkedHashMap<Product, Integer> databaseLineToProductMap(String line) throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public LinkedHashMap<Product, Integer> databaseLineToProductMap(String line) {
         LinkedHashMap<Product, Integer> orderProductsAndQuantities = new LinkedHashMap<>();
         String[] orderProperties = line.split("|");
         String encodedProductsString = orderProperties[3];
         String[] productProperties = encodedProductsString.split("_");
         for (String pair : productProperties) {
             String[] productIDAndQuantity = pair.split("-");
-            orderProductsAndQuantities.put(productService.findProductByID(parseInt(productIDAndQuantity[0])), parseInt(productIDAndQuantity[1]));
+            String productID = productIDAndQuantity[0];
+            String quantity = productIDAndQuantity[1];
+            Product product = productService.findProductByID(parseInt(productID));
+            orderProductsAndQuantities.put(product, parseInt(quantity));
         }
         return orderProductsAndQuantities;
     }

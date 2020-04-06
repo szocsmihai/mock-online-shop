@@ -8,11 +8,8 @@ import ro.iteahome.shop.model.Product;
 import ro.iteahome.shop.ui.popups.OutputFrame;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import static java.lang.Integer.parseInt;
 
 public class OrderService {
 
@@ -28,14 +25,6 @@ public class OrderService {
 
     public void addNewOrder(int userID, LinkedHashMap<Product, Integer> products, float totalPrice, Order.PaymentMethod paymentMethod) {
         orderDAO.addNewOrder(new Order(userID, products, totalPrice, paymentMethod));
-    }
-
-    public void updateOrder() {
-        //TODO: Develop this for admins. Shoppers should send a request for updates and get a confirmation back after the fact.
-    }
-
-    public void removeOrder() {
-        //TODO: Develop this for admins. Shoppers should send a request for cancellation and get a confirmation back after the fact.
     }
 
     public void cancelOrder() {
@@ -54,16 +43,6 @@ public class OrderService {
         return orderDAO.findOrdersByUserID(ID);
     }
 
-    public String encodedProductsStringToInfoString(String encodedString) {
-        LinkedHashMap<Product, Integer> productMap = orderDAO.encodedProductsStringToMap(encodedString);
-        StringBuilder productListBuilder = new StringBuilder();
-        String indent = "            ";
-        for (Map.Entry<Product, Integer> pair : productMap.entrySet()) {
-            productListBuilder.append(indent).append(pair.getValue()).append("x ").append(pair.getKey().getName()).append("\n");
-        }
-        return productListBuilder.toString();
-    }
-
     public void outputOrderList(ArrayList<Order> orders) {
         for (Order order : orders) {
             String encodedString = order.productsToEncodedString();
@@ -79,5 +58,15 @@ public class OrderService {
 
             OutputFrame.printList(orderProperties);
         }
+    }
+
+    public String encodedProductsStringToInfoString(String encodedString) {
+        LinkedHashMap<Product, Integer> productMap = orderDAO.encodedProductsStringToMap(encodedString);
+        StringBuilder productListBuilder = new StringBuilder();
+        String indent = "            ";
+        for (Map.Entry<Product, Integer> pair : productMap.entrySet()) {
+            productListBuilder.append(indent).append(pair.getValue()).append("x ").append(pair.getKey().getName()).append("\n");
+        }
+        return productListBuilder.toString();
     }
 }
