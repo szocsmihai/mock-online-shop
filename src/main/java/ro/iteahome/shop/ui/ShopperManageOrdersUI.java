@@ -76,6 +76,7 @@ public class ShopperManageOrdersUI extends LoopUI {
                     .stream()
                     .filter(order -> order.getCurrentStatus().equals(Order.Status.NOT_DELIVERED))
                     .collect(Collectors.toCollection(ArrayList::new));
+
             if (!displayedOrders.isEmpty()) {
                 OutputFrame.printInfo("YOUR ACTIVE ORDERS:");
                 orderService.outputOrderList(displayedOrders);
@@ -89,10 +90,17 @@ public class ShopperManageOrdersUI extends LoopUI {
         User user = UserContext.getLoggedInUser();
         ArrayList<Order> userOrders = orderService.findOrdersByUserID(user.getID());
         if (!userOrders.isEmpty()) {
-            displayedOrders = userOrders
+            ArrayList<Order> deliveredOrders = userOrders
                     .stream()
                     .filter(order -> order.getCurrentStatus().equals(Order.Status.DELIVERED))
                     .collect(Collectors.toCollection(ArrayList::new));
+            ArrayList<Order> cancelledOrders = userOrders
+                    .stream()
+                    .filter(order -> order.getCurrentStatus().equals(Order.Status.CANCELLED))
+                    .collect(Collectors.toCollection(ArrayList::new));
+            displayedOrders.addAll(deliveredOrders);
+            displayedOrders.addAll(cancelledOrders);
+
             if (!displayedOrders.isEmpty()) {
                 OutputFrame.printInfo("YOUR CLOSED ORDERS:");
                 orderService.outputOrderList(displayedOrders);

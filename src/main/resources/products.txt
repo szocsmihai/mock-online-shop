@@ -1,4 +1,4 @@
-1|Smartphones|iPhone 11 PRO MAX|Hexa-core 1.8-2.65GHz CPU, 4GB RAM, 64GB storage, 6.5inch OLED display|5700.0|RON|10|3|PC.
+1|Smartphones|iPhone 11 PRO MAX|Hexa-core 1.8-2.65GHz CPU, 4GB RAM, 64GB storage, 6.5inch OLED display|5700.0|RON|9|4|PC.
 2|Smartphones|Samsung S20 ULTRA|Octa-core 2.5-2.73GHz CPU, 12GB RAM, 128GB storage, 6.9inch AMOLED display|6500.0|RON|10|3|PC.
-3|Laptops|2-in-1 Microsoft Surface Book 2 15|Quad-core 1.9GHz i7, 16GB RAM, 512GB SSD, 15inch IPS touchscreen display|19300.0|RON|10|3|PC.
+3|Laptops|2-in-1 Microsoft Surface Book 2 15|Quad-core 1.9GHz i7, 16GB RAM, 512GB SSD, 15inch IPS touchscreen display|19300.0|RON|9|4|PC.
 4|Laptops|Ultrabook Asus ZenBook Pro Duo|Octa-core 2.4GHz i9, 32GB RAM, 1TB SSD, 15.6inch OLED display|16600.0|RON|10|3|PC.
