@@ -1,7 +1,6 @@
 package ro.iteahome.shop.dao;
 
 import ro.iteahome.shop.exceptions.business.ShopEntryNotFoundException;
-import ro.iteahome.shop.exceptions.technical.ShopFileNotFoundException;
 import ro.iteahome.shop.model.User;
 import ro.iteahome.shop.ui.popups.OutputFrame;
 
@@ -19,6 +18,8 @@ import static java.lang.Integer.parseInt;
  */
 public class UserDAO {
 
+    //TODO: Catch ShopEntryNotFoundExceptions here.
+
     /**
      * Every DAO class stores the paths ({@code String}) to its corresponding database and sequence .txt files and keeps
      * a reference to the {@code FileUtil} class, to access its methods.
@@ -34,7 +35,7 @@ public class UserDAO {
     Function<String[], User> constructUser = (line) -> {
 
         int ID = parseInt(line[0]);
-        User.Role currentRole = mapStringToRoleEnum(line[1]);
+        User.Role currentRole = stringToRole(line[1]);
         String email = line[2];
         String password = line[3];
         String fullName = line[4];
@@ -59,11 +60,11 @@ public class UserDAO {
         }
     }
 
-    public void updateUser(User targetUser, User newUser) throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public void updateUser(User targetUser, User newUser) throws ShopEntryNotFoundException {
         fileUtil.updateEntry(DATABASE_PATH, targetUser, newUser, constructUser);
     }
 
-    public void removeUser(User targetUser) throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public void removeUser(User targetUser) throws ShopEntryNotFoundException {
         fileUtil.removeEntry(DATABASE_PATH, targetUser, constructUser);
     }
 
@@ -71,24 +72,29 @@ public class UserDAO {
      * Methods that read the User database:
      */
 
-    public ArrayList<User> getAllUsers() throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public ArrayList<User> getAllUsers() throws ShopEntryNotFoundException {
         return fileUtil.getAllEntries(DATABASE_PATH, constructUser);
     }
 
-    public User findUserByID(int ID) throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public User findUserByID(int ID) throws ShopEntryNotFoundException {
         return fileUtil.findFirstEntryByProperty(DATABASE_PATH, 0, String.valueOf(ID), constructUser);
     }
 
-    public User findUserByEmail(String email) throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public User findUserByEmail(String email) throws ShopEntryNotFoundException {
         return fileUtil.findFirstEntryByProperty(DATABASE_PATH, 2, email, constructUser);
     }
 
-    private User.Role mapStringToRoleEnum(String string) {
-        User.Role currentRole;
-        if (string.equals(User.Role.SHOPPER.toString())) {
-            currentRole = User.Role.SHOPPER;
-        } else {
-            currentRole = User.Role.ADMIN;
+    private User.Role stringToRole(String string) {
+        User.Role currentRole = null;
+        switch (string) {
+            case "SHOPPER":
+                currentRole = User.Role.SHOPPER;
+                break;
+            case "ADMIN":
+                currentRole = User.Role.ADMIN;
+                break;
+            default:
+                OutputFrame.printAlert("INVALID INPUT");
         }
         return currentRole;
     }

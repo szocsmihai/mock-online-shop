@@ -1,7 +1,6 @@
 package ro.iteahome.shop.dao;
 
 import ro.iteahome.shop.exceptions.business.ShopEntryNotFoundException;
-import ro.iteahome.shop.exceptions.technical.ShopFileNotFoundException;
 import ro.iteahome.shop.model.WritableToDatabase;
 import ro.iteahome.shop.ui.popups.OutputFrame;
 
@@ -28,7 +27,7 @@ class FileUtil<Entry extends WritableToDatabase> {
      * - a method to construct entries from the database lines (more specifically, from the array of line tokens
      * representing the entry properties).
      */
-    ArrayList<Entry> getAllEntries(String databasePath, Function<String[], Entry> arrayToEntry) throws ShopEntryNotFoundException {
+    ArrayList<Entry> getAllEntries(String databasePath, Function<String[], Entry> constructEntry) throws ShopEntryNotFoundException {
         ArrayList<Entry> fileEntries = new ArrayList<>();
         try (Scanner fileScanner = new Scanner(new File(databasePath))) {
 
@@ -36,7 +35,7 @@ class FileUtil<Entry extends WritableToDatabase> {
                 String entryLine = fileScanner.nextLine();
                 String[] entryProperties = entryLine.split("\\|");
                 if (entryLine.length() != 0) {
-                    Entry entry = arrayToEntry.apply(entryProperties);
+                    Entry entry = constructEntry.apply(entryProperties);
                     fileEntries.add(entry);
                 }
             }
@@ -65,7 +64,7 @@ class FileUtil<Entry extends WritableToDatabase> {
      * - a method to construct Entry objects from the database text lines (more specifically, from the array of line
      * tokens representing the entry properties).
      */
-    Entry findFirstEntryByProperty(String databasePath, int propertyIndex, String value, Function<String[], Entry> arrayToEntry) throws ShopEntryNotFoundException {
+    Entry findFirstEntryByProperty(String databasePath, int propertyIndex, String value, Function<String[], Entry> constructEntry) throws ShopEntryNotFoundException {
         Entry entry = null;
         try (Scanner fileScanner = new Scanner(new File(databasePath))) {
 
@@ -74,7 +73,7 @@ class FileUtil<Entry extends WritableToDatabase> {
                 String[] entryProperties = entryLine.split("\\|");
                 String targetProperty = entryProperties[propertyIndex];
                 if (entryLine.length() != 0 && targetProperty.matches(value)) {
-                    entry = arrayToEntry.apply(entryProperties);
+                    entry = constructEntry.apply(entryProperties);
                     break;
                 }
             }
@@ -195,7 +194,7 @@ class FileUtil<Entry extends WritableToDatabase> {
     }
 
     /**
-     * {@code incrementSequence()} replaces the value found in a specified ID sequence file with its incremented value.
+     * {@code updateSequence()} replaces the value found in a specified ID sequence file with its incremented value.
      * <p>
      * For implementation, it requires:
      * <p>
@@ -309,17 +308,17 @@ class FileUtil<Entry extends WritableToDatabase> {
                 String targetProperty = entryProperties[propertyIndex];
                 valueSet.add(targetProperty);
             }
-            if (valueSet.isEmpty()) {
-                throw new ShopEntryNotFoundException();
-            } else {
-                values.addAll(valueSet);
-                Collections.sort(values);
-            }
+            values.addAll(valueSet);
+            Collections.sort(values);
 
         } catch (FileNotFoundException e) {
             OutputFrame.printAlert("DATABASE NOT ACCESSIBLE.");
         }
-        return values;
+        if (values.isEmpty()) {
+            throw new ShopEntryNotFoundException();
+        } else {
+            return values;
+        }
     }
 
     /**

@@ -6,10 +6,6 @@ public class UserContext {
 
     private static User loggedInUser;
 
-    public static boolean isUserLoggedIn() {
-        return loggedInUser != null;
-    }
-
     public static boolean isAdminLoggedIn() {
         return (loggedInUser != null && loggedInUser.getCurrentRole().equals(User.Role.ADMIN));
     }

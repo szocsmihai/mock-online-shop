@@ -2,7 +2,6 @@ package ro.iteahome.shop.service;
 
 import ro.iteahome.shop.dao.UserDAO;
 import ro.iteahome.shop.exceptions.business.ShopEntryNotFoundException;
-import ro.iteahome.shop.exceptions.technical.ShopFileNotFoundException;
 import ro.iteahome.shop.model.Cart;
 import ro.iteahome.shop.model.User;
 import ro.iteahome.shop.security.UserContext;
@@ -28,7 +27,7 @@ public class UserService {
      * Methods that manipulate the {@code UserContext}:
      */
 
-    public void logIn(String email, String password) throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public void logIn(String email, String password) {
         if (doCredentialsMatch(email, password)) {
             UserContext.setLoggedInUser(userDAO.findUserByEmail(email));
         } else {
@@ -45,11 +44,11 @@ public class UserService {
      * Methods that interact with the User database through {@code UserDAO}:
      */
 
-    public void signUp(String email, String password) throws ShopFileNotFoundException {
+    public void signUp(String email, String password) {
         userDAO.addNewUser(new User(email, password));
     }
 
-    public void updateUserInfo(String currentEmail, String newEmail, String newPassword, String newFullName, String newPhoneNo, String newDeliveryAddress) throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public void updateUserInfo(String currentEmail, String newEmail, String newPassword, String newFullName, String newPhoneNo, String newDeliveryAddress) {
         User user = userDAO.findUserByEmail(currentEmail);
 
         //User ID is not modified in this context.
@@ -63,23 +62,23 @@ public class UserService {
         userDAO.updateUser(user, user); //ID is used for identifying current user, so there is no conflict here.
     }
 
-    public void changeRoleToAdmin(String email) throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public void changeRoleToAdmin(String email) {
         User user = userDAO.findUserByEmail(email);
         user.setCurrentRole(User.Role.ADMIN);
         userDAO.updateUser(user, user); //ID is used for identifying current user, so there is no conflict here.
     }
 
-    public void changeRoleToShopper(String email) throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public void changeRoleToShopper(String email) {
         User user = userDAO.findUserByEmail(email);
         user.setCurrentRole(User.Role.SHOPPER);
         userDAO.updateUser(user, user); //ID is used for identifying current user, so there is no conflict here.
     }
 
-    public void deleteUser(String ID) throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public void deleteUser(String ID) {
         userDAO.removeUser(userDAO.findUserByID(parseInt(ID)));
     }
 
-    public boolean doesUserExist(String email) throws ShopFileNotFoundException {
+    public boolean doesUserExist(String email) {
         try {
             return (userDAO.findUserByEmail(email) != null);
         } catch (ShopEntryNotFoundException e) {
@@ -87,11 +86,11 @@ public class UserService {
         }
     }
 
-    public User findUserByEmail(String email) throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public User findUserByEmail(String email) {
         return userDAO.findUserByEmail(email);
     }
 
-    public boolean doCredentialsMatch(String email, String password) throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public boolean doCredentialsMatch(String email, String password) {
         User user = userDAO.findUserByEmail(email);
         String userPassword = user.getPassword();
         return password.matches(userPassword);
@@ -116,7 +115,7 @@ public class UserService {
         }
     }
 
-    public void outputUserCompleteInfo(User user) throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public void outputUserCompleteInfo(User user) {
         ArrayList<String> userInfo = new ArrayList<>();
 
         userInfo.add("ROLE:       " + user.getCurrentRole());

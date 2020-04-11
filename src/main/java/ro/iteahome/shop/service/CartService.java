@@ -1,7 +1,5 @@
 package ro.iteahome.shop.service;
 
-import ro.iteahome.shop.exceptions.business.ShopEntryNotFoundException;
-import ro.iteahome.shop.exceptions.technical.ShopFileNotFoundException;
 import ro.iteahome.shop.model.Cart;
 import ro.iteahome.shop.model.Product;
 import ro.iteahome.shop.ui.popups.OutputFrame;
@@ -39,7 +37,7 @@ public class CartService {
         Cart.content.remove(product);
     }
 
-    public void updateCartProductQuantity(String ID, String quantity) throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public void updateCartProductQuantity(String ID, String quantity) {
         Product product = findCartProductByID(ID);
         Cart.content.replace(product, parseInt(quantity));
     }
@@ -66,24 +64,15 @@ public class CartService {
         return quantitySoFar;
     }
 
-    public boolean canExtraQuantityBeAdded(String ID, String quantity) throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public boolean canExtraQuantityBeAdded(String ID, String quantity) {
         Product databaseProduct = productService.findProductByID(parseInt(ID));
         int totalQuantity = parseInt(quantity) + productQuantitySoFar(String.valueOf(databaseProduct.getID()));
         return (totalQuantity <= databaseProduct.getStock());
     }
 
-    public boolean isQuantityWithinStock(String ID, String quantity) throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public boolean isQuantityWithinStock(String ID, String quantity) {
         Product databaseProduct = productService.findProductByID(parseInt(ID));
         return parseInt(quantity) <= databaseProduct.getStock();
-    }
-
-    //TODO: Determine if this is still useful:
-    public ArrayList<Product> cartProductsAsArray() {
-        ArrayList<Product> cartArray = new ArrayList<>();
-        for (Map.Entry<Product, Integer> pair : Cart.content.entrySet()) {
-            cartArray.add(pair.getKey());
-        }
-        return cartArray;
     }
 
     /**

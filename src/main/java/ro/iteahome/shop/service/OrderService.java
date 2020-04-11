@@ -1,8 +1,6 @@
 package ro.iteahome.shop.service;
 
 import ro.iteahome.shop.dao.OrderDAO;
-import ro.iteahome.shop.exceptions.business.ShopEntryNotFoundException;
-import ro.iteahome.shop.exceptions.technical.ShopFileNotFoundException;
 import ro.iteahome.shop.model.Order;
 import ro.iteahome.shop.model.Product;
 import ro.iteahome.shop.ui.popups.OutputFrame;
@@ -21,7 +19,6 @@ public class OrderService {
      * - Returns order information via its corresponding DAO class;
      */
     private OrderDAO orderDAO = new OrderDAO();
-    private ProductService productService = new ProductService();
 
     public void addNewOrder(int userID, LinkedHashMap<Product, Integer> products, float totalPrice, Order.PaymentMethod paymentMethod) {
         orderDAO.addNewOrder(new Order(userID, products, totalPrice, paymentMethod));
@@ -31,7 +28,7 @@ public class OrderService {
         //TODO: Develop this. Update stock and sold units.
     }
 
-    public ArrayList<Order> getAllOrders() throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public ArrayList<Order> getAllOrders() {
         return orderDAO.getAllOrders();
     }
 

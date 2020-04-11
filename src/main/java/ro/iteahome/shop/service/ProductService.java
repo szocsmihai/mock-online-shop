@@ -1,8 +1,6 @@
 package ro.iteahome.shop.service;
 
 import ro.iteahome.shop.dao.ProductDAO;
-import ro.iteahome.shop.exceptions.business.ShopEntryNotFoundException;
-import ro.iteahome.shop.exceptions.technical.ShopFileNotFoundException;
 import ro.iteahome.shop.model.Cart;
 import ro.iteahome.shop.model.Product;
 import ro.iteahome.shop.ui.popups.OutputFrame;
@@ -30,12 +28,12 @@ public class ProductService {
      * Methods that write to the Product database through {@code ProductDAO}:
      */
 
-    public void addNewProduct(String category, String name, String description, float price, int stock) throws ShopFileNotFoundException {
+    public void addNewProduct(String category, String name, String description, float price, int stock) {
         productDAO.addNewProduct(new Product(category, name, description, price, stock));
         //TODO: The UI for adding products should allow for "-" as the description, by prompting the admin.
     }
 
-    public void updateProduct(String ID, String newCategory, String newName, String newDescription, String newPrice, String newStock, String newUnitsSold) throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public void updateProduct(String ID, String newCategory, String newName, String newDescription, String newPrice, String newStock, String newUnitsSold) {
         Product currentProduct = productDAO.findProductByID(parseInt(ID));
         Product newProduct = new Product(
                 currentProduct.getID(),
@@ -67,7 +65,7 @@ public class ProductService {
         }
     }
 
-    public void removeProduct(Product product) throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public void removeProduct(Product product) {
         productDAO.removeProduct(product);
     }
 
@@ -75,11 +73,11 @@ public class ProductService {
      * Methods that read from the Product database through {@code ProductDAO}:
      */
 
-    public ArrayList<Product> getAllProducts() throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public ArrayList<Product> getAllProducts() {
         return productDAO.getAllProducts();
     }
 
-    public ArrayList<Product> getSoldProducts() throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public ArrayList<Product> getSoldProducts() {
         ArrayList<Product> soldProducts = new ArrayList<>();
         for (Product product : getAllProducts()) {
             if (product.getUnitsSold() > 0) {
@@ -89,7 +87,7 @@ public class ProductService {
         return soldProducts;
     }
 
-    public ArrayList<Product> getPopularProducts() throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public ArrayList<Product> getPopularProducts() {
         ArrayList<Product> popularProducts = new ArrayList<>();
         ArrayList<Product> soldProducts = getSoldProducts();
         if (soldProducts.size() > 2) {
@@ -105,27 +103,23 @@ public class ProductService {
         return productDAO.findProductByID(ID);
     }
 
-    public ArrayList<Product> findProductsByCategory(String category) throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public ArrayList<Product> findProductsByCategory(String category) {
         return productDAO.findProductsByCategory(category);
     }
 
-    public ArrayList<Product> findPossibleProductsByCategory(String pattern) throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public ArrayList<Product> findPossibleProductsByCategory(String pattern) {
         return productDAO.findPossibleProductsByCategory(pattern);
     }
 
-    public ArrayList<Product> findPossibleProductsByName(String pattern) throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public ArrayList<Product> findPossibleProductsByName(String pattern) {
         return productDAO.findPossibleProductsByName(pattern);
     }
 
-    public ArrayList<Product> findPossibleProductsByDescription(String pattern) throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public ArrayList<Product> findPossibleProductsByDescription(String pattern) {
         return productDAO.findPossibleProductsByDescription(pattern);
     }
 
-    public ArrayList<String> getAllCategories() throws ShopFileNotFoundException, ShopEntryNotFoundException {
-        return productDAO.getProductCategories();
-    }
-
-    public HashMap<Integer, String> getNumberedCategories() throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public HashMap<Integer, String> getNumberedCategories() {
         ArrayList<String> list = productDAO.getProductCategories();
         HashMap<Integer, String> numberedList = new HashMap<>();
         int position = 0;
@@ -133,16 +127,6 @@ public class ProductService {
             numberedList.put(++position, category);
         }
         return numberedList;
-    }
-
-    public boolean doesCategoryExist(String pattern) throws ShopFileNotFoundException {
-        boolean doesCategoryExist;
-        try {
-            doesCategoryExist = findProductsByCategory(pattern).size() != 0;
-        } catch (ShopEntryNotFoundException e) {
-            doesCategoryExist = false;
-        }
-        return doesCategoryExist;
     }
 
     /**

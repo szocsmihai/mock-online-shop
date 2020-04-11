@@ -29,14 +29,15 @@ public class OrderDAO {
      * In order to convert lines of text to Order objects, a {@code constructOrder} lambda function is defined.
      */
     Function<String[], Order> constructOrder = (line) -> {
+
         int orderID = parseInt(line[0]);
         String confirmationDate = line[1];
         int userID = parseInt(line[2]);
         LinkedHashMap<Product, Integer> products = encodedProductsStringToMap(line[3]);
         float totalPrice = parseFloat(line[4]);
         //currency is read by the Order class from the Product class;
-        Order.PaymentMethod paymentMethod = stringToOrderPaymentMethodEnum(line[6]);
-        Order.Status currentStatus = stringToOrderStatusEnum(line[7]);
+        Order.PaymentMethod paymentMethod = stringToPaymentMethod(line[6]);
+        Order.Status currentStatus = stringToStatus(line[7]);
 
         return new Order(orderID, confirmationDate, userID, products, totalPrice, paymentMethod, currentStatus);
     };
@@ -101,13 +102,13 @@ public class OrderDAO {
         return userOrders;
     }
 
-    public LinkedHashMap<Product, Integer> encodedProductsStringToMap(String encodedString) {
+    public LinkedHashMap<Product, Integer> encodedProductsStringToMap(String encodedProductsString) {
         LinkedHashMap<Product, Integer> orderProductsAndQuantities = new LinkedHashMap<>();
-        String[] productProperties = encodedString.split("_");
-        for (String pair : productProperties) {
-            String[] productIDAndQuantity = pair.split("-");
-            String productID = productIDAndQuantity[0];
-            String quantity = productIDAndQuantity[1];
+        String[] encodedProducts = encodedProductsString.split("_");
+        for (String pair : encodedProducts) {
+            String[] pairValues = pair.split("-");
+            String productID = pairValues[0];
+            String quantity = pairValues[1];
             Product product = productService.findProductByID(parseInt(productID));
             orderProductsAndQuantities.put(product, parseInt(quantity));
         }
@@ -118,18 +119,18 @@ public class OrderDAO {
         LinkedHashMap<Product, Integer> orderProductsAndQuantities = new LinkedHashMap<>();
         String[] orderProperties = line.split("|");
         String encodedProductsString = orderProperties[3];
-        String[] productProperties = encodedProductsString.split("_");
-        for (String pair : productProperties) {
-            String[] productIDAndQuantity = pair.split("-");
-            String productID = productIDAndQuantity[0];
-            String quantity = productIDAndQuantity[1];
+        String[] encodedProducts = encodedProductsString.split("_");
+        for (String pair : encodedProducts) {
+            String[] pairValues = pair.split("-");
+            String productID = pairValues[0];
+            String quantity = pairValues[1];
             Product product = productService.findProductByID(parseInt(productID));
             orderProductsAndQuantities.put(product, parseInt(quantity));
         }
         return orderProductsAndQuantities;
     }
 
-    private Order.PaymentMethod stringToOrderPaymentMethodEnum(String string) {
+    private Order.PaymentMethod stringToPaymentMethod(String string) {
         Order.PaymentMethod paymentMethod = null;
         switch (string) {
             case "ON_DELIVERY":
@@ -144,7 +145,7 @@ public class OrderDAO {
         return paymentMethod;
     }
 
-    private Order.Status stringToOrderStatusEnum(String string) {
+    private Order.Status stringToStatus(String string) {
         Order.Status currentStatus = null;
         switch (string) {
             case "NOT_DELIVERED":

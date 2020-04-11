@@ -1,7 +1,6 @@
 package ro.iteahome.shop.dao;
 
 import ro.iteahome.shop.exceptions.business.ShopEntryNotFoundException;
-import ro.iteahome.shop.exceptions.technical.ShopFileNotFoundException;
 import ro.iteahome.shop.model.Product;
 import ro.iteahome.shop.ui.popups.OutputFrame;
 
@@ -20,6 +19,8 @@ import static java.lang.Integer.parseInt;
  * for persistence.
  */
 public class ProductDAO {
+
+    //TODO: Catch ShopEntryNotFoundExceptions here.
 
     /**
      * Every DAO class stores the paths ({@code String}) to its corresponding database and sequence .txt files and keeps
@@ -71,7 +72,7 @@ public class ProductDAO {
         }
     }
 
-    public void removeProduct(Product targetProduct) throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public void removeProduct(Product targetProduct) throws ShopEntryNotFoundException {
         fileUtil.removeEntry(DATABASE_PATH, targetProduct, constructProduct);
     }
 
@@ -79,11 +80,11 @@ public class ProductDAO {
      * Methods that read the Product database:
      */
 
-    public ArrayList<Product> getAllProducts() throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public ArrayList<Product> getAllProducts() throws ShopEntryNotFoundException {
         return fileUtil.getAllEntries(DATABASE_PATH, constructProduct);
     }
 
-    public ArrayList<String> getProductCategories() throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public ArrayList<String> getProductCategories() throws ShopEntryNotFoundException {
         return fileUtil.getSortedPropertyValues(DATABASE_PATH, 1);
     }
 
@@ -99,19 +100,19 @@ public class ProductDAO {
         return product;
     }
 
-    public ArrayList<Product> findProductsByCategory(String pattern) throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public ArrayList<Product> findProductsByCategory(String pattern) throws ShopEntryNotFoundException {
         return fileUtil.findEntriesByProperty(DATABASE_PATH, 1, pattern, constructProduct);
     }
 
-    public ArrayList<Product> findPossibleProductsByCategory(String pattern) throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public ArrayList<Product> findPossibleProductsByCategory(String pattern) throws ShopEntryNotFoundException {
         return fileUtil.findPossibleEntries(DATABASE_PATH, 1, pattern, constructProduct);
     }
 
-    public ArrayList<Product> findPossibleProductsByName(String pattern) throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public ArrayList<Product> findPossibleProductsByName(String pattern) throws ShopEntryNotFoundException {
         return fileUtil.findPossibleEntries(DATABASE_PATH, 2, pattern, constructProduct);
     }
 
-    public ArrayList<Product> findPossibleProductsByDescription(String pattern) throws ShopFileNotFoundException, ShopEntryNotFoundException {
+    public ArrayList<Product> findPossibleProductsByDescription(String pattern) throws ShopEntryNotFoundException {
         return fileUtil.findPossibleEntries(DATABASE_PATH, 3, pattern, constructProduct);
     }
 }
