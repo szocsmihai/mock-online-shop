@@ -1,7 +1,5 @@
 package ro.iteahome.shop.ui;
 
-import ro.iteahome.shop.exceptions.business.ShopEntryNotFoundException;
-import ro.iteahome.shop.exceptions.technical.ShopFileNotFoundException;
 import ro.iteahome.shop.model.Product;
 import ro.iteahome.shop.ui.options.UIOption;
 import ro.iteahome.shop.ui.popups.InputFrame;
@@ -63,47 +61,23 @@ public class ShopperFindProductsUI extends ShopperGetProductsUI {
     }
 
     private void showByCategory(String pattern) {
-        try {
-
-            ArrayList<Product> resultsByCategory = productService.findPossibleProductsByCategory(pattern);
-            OutputFrame.printConfirmation("MATCHES BY CATEGORY:");
-            productService.outputProductList(resultsByCategory);
-            displayedProducts.addAll(resultsByCategory);
-
-        } catch (ShopEntryNotFoundException e) {
-            OutputFrame.printConfirmation("NO MATCHES FOUND BY CATEGORY.");
-        } catch (ShopFileNotFoundException e) {
-            e.printStackTrace();
-        }
+        ArrayList<Product> resultsByCategory = productService.findPossibleProductsByCategory(pattern);
+        OutputFrame.printConfirmation("MATCHES BY CATEGORY:");
+        productService.outputProductList(resultsByCategory);
+        displayedProducts.addAll(resultsByCategory);
     }
 
     private void showByName(String pattern) {
-        try {
-
-            ArrayList<Product> resultsByName = productService.findPossibleProductsByName(pattern);
-            OutputFrame.printConfirmation("MATCHES BY NAME:");
-            productService.outputProductList(resultsByName);
-            displayedProducts.addAll(resultsByName);
-
-        } catch (ShopEntryNotFoundException e) {
-            OutputFrame.printConfirmation("NO MATCHES FOUND BY NAME.");
-        } catch (ShopFileNotFoundException e) {
-            e.printStackTrace();
-        }
+        ArrayList<Product> resultsByName = productService.findPossibleProductsByName(pattern);
+        OutputFrame.printConfirmation("MATCHES BY NAME:");
+        productService.outputProductList(resultsByName);
+        displayedProducts.addAll(resultsByName);
     }
 
     private void showByDescription(String pattern) {
-        try {
-
-            ArrayList<Product> resultsByDescription = productService.findPossibleProductsByDescription(pattern);
-            OutputFrame.printConfirmation("MATCHES BY DESCRIPTION:");
-            productService.outputProductList(resultsByDescription);
-            displayedProducts.addAll(resultsByDescription);
-
-        } catch (ShopEntryNotFoundException e) {
-            OutputFrame.printConfirmation("NO MATCHES FOUND BY DESCRIPTION.");
-        } catch (ShopFileNotFoundException e) {
-            e.printStackTrace();
-        }
+        ArrayList<Product> resultsByDescription = productService.findPossibleProductsByDescription(pattern);
+        OutputFrame.printConfirmation("MATCHES BY DESCRIPTION:");
+        productService.outputProductList(resultsByDescription);
+        displayedProducts.addAll(resultsByDescription);
     }
 }

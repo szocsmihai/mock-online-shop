@@ -1,9 +1,6 @@
 package ro.iteahome.shop.ui;
 
-import ro.iteahome.shop.exceptions.business.ShopEntryNotFoundException;
-import ro.iteahome.shop.exceptions.technical.ShopFileNotFoundException;
 import ro.iteahome.shop.model.Cart;
-import ro.iteahome.shop.model.Order;
 import ro.iteahome.shop.model.Product;
 import ro.iteahome.shop.security.UserContext;
 import ro.iteahome.shop.service.CartService;
@@ -64,7 +61,7 @@ public class ShopperManageCartUI extends LoopUI {
                     }
                 }
 
-            } catch (ShopFileNotFoundException | ShopEntryNotFoundException | InterruptedException e) {
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }));
@@ -154,18 +151,12 @@ public class ShopperManageCartUI extends LoopUI {
     }
 
     private void showSelectQuantity() {
-        try {
-
-            String userInput = InputFrame.getInputFromPrompt("ENTER NEW QUANTITY FOR \"" + selectedProduct.getName() + "\" (0 : CANCEL):");
-            while (!userInput.equals("0") && (!userInput.matches("\\d+") || !cartService.isQuantityWithinStock(String.valueOf(selectedProduct.getID()), userInput))) {
-                userInput = InputFrame.getInputFromAlert("INVALID INPUT OR INSUFFICIENT STOCK. TRY AGAIN (0 : CANCEL):");
-            }
-            if (!userInput.equals("0")) {
-                selectedQuantity = userInput;
-            }
-
-        } catch (ShopFileNotFoundException | ShopEntryNotFoundException e) {
-            e.printStackTrace();
+        String userInput = InputFrame.getInputFromPrompt("ENTER NEW QUANTITY FOR \"" + selectedProduct.getName() + "\" (0 : CANCEL):");
+        while (!userInput.equals("0") && (!userInput.matches("\\d+") || !cartService.isQuantityWithinStock(String.valueOf(selectedProduct.getID()), userInput))) {
+            userInput = InputFrame.getInputFromAlert("INVALID INPUT OR INSUFFICIENT STOCK. TRY AGAIN (0 : CANCEL):");
+        }
+        if (!userInput.equals("0")) {
+            selectedQuantity = userInput;
         }
     }
 

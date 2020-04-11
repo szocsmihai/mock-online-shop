@@ -1,7 +1,6 @@
 package ro.iteahome.shop.service;
 
 import ro.iteahome.shop.dao.UserDAO;
-import ro.iteahome.shop.exceptions.business.ShopEntryNotFoundException;
 import ro.iteahome.shop.model.Cart;
 import ro.iteahome.shop.model.User;
 import ro.iteahome.shop.security.UserContext;
@@ -79,11 +78,7 @@ public class UserService {
     }
 
     public boolean doesUserExist(String email) {
-        try {
-            return (userDAO.findUserByEmail(email) != null);
-        } catch (ShopEntryNotFoundException e) {
-            return false;
-        }
+        return (userDAO.findUserByEmail(email) != null);
     }
 
     public User findUserByEmail(String email) {

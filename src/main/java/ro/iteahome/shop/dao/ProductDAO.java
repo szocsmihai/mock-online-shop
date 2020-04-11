@@ -20,8 +20,6 @@ import static java.lang.Integer.parseInt;
  */
 public class ProductDAO {
 
-    //TODO: Catch ShopEntryNotFoundExceptions here.
-
     /**
      * Every DAO class stores the paths ({@code String}) to its corresponding database and sequence .txt files and keeps
      * a reference to the {@code FileUtil} class, to access its methods.
@@ -72,20 +70,42 @@ public class ProductDAO {
         }
     }
 
-    public void removeProduct(Product targetProduct) throws ShopEntryNotFoundException {
-        fileUtil.removeEntry(DATABASE_PATH, targetProduct, constructProduct);
+    public void removeProduct(Product targetProduct) {
+        try {
+
+            fileUtil.removeEntry(DATABASE_PATH, targetProduct, constructProduct);
+
+        } catch (ShopEntryNotFoundException e) {
+            OutputFrame.printAlert("PRODUCT NOT FOUND.");
+        }
     }
 
     /**
      * Methods that read the Product database:
      */
 
-    public ArrayList<Product> getAllProducts() throws ShopEntryNotFoundException {
-        return fileUtil.getAllEntries(DATABASE_PATH, constructProduct);
+    public ArrayList<Product> getAllProducts() {
+        ArrayList<Product> products = new ArrayList<>();
+        try {
+
+            products = fileUtil.getAllEntries(DATABASE_PATH, constructProduct);
+
+        } catch (ShopEntryNotFoundException e) {
+            OutputFrame.printAlert("NO PRODUCTS FOUND.");
+        }
+        return products;
     }
 
-    public ArrayList<String> getProductCategories() throws ShopEntryNotFoundException {
-        return fileUtil.getSortedPropertyValues(DATABASE_PATH, 1);
+    public ArrayList<String> getProductCategories() {
+        ArrayList<String> categories = new ArrayList<>();
+        try {
+
+            categories = fileUtil.getSortedPropertyValues(DATABASE_PATH, 1);
+
+        } catch (ShopEntryNotFoundException e) {
+            OutputFrame.printAlert("NO CATEGORIES FOUND.");
+        }
+        return categories;
     }
 
     public Product findProductByID(int ID) {
@@ -95,24 +115,56 @@ public class ProductDAO {
             product = fileUtil.findFirstEntryByProperty(DATABASE_PATH, 0, String.valueOf(ID), constructProduct);
 
         } catch (ShopEntryNotFoundException e) {
-            OutputFrame.printConfirmation("NO PRODUCT FOUND BY GIVEN ID");
+            OutputFrame.printConfirmation("PRODUCT NOT FOUND.");
         }
         return product;
     }
 
-    public ArrayList<Product> findProductsByCategory(String pattern) throws ShopEntryNotFoundException {
-        return fileUtil.findEntriesByProperty(DATABASE_PATH, 1, pattern, constructProduct);
+    public ArrayList<Product> findProductsByCategory(String pattern) {
+        ArrayList<Product> products = new ArrayList<>();
+        try {
+
+            products = fileUtil.findEntriesByProperty(DATABASE_PATH, 1, pattern, constructProduct);
+
+        } catch (ShopEntryNotFoundException e) {
+            OutputFrame.printAlert("NO PRODUCTS FOUND.");
+        }
+        return products;
     }
 
-    public ArrayList<Product> findPossibleProductsByCategory(String pattern) throws ShopEntryNotFoundException {
-        return fileUtil.findPossibleEntries(DATABASE_PATH, 1, pattern, constructProduct);
+    public ArrayList<Product> findPossibleProductsByCategory(String pattern) {
+        ArrayList<Product> products = new ArrayList<>();
+        try {
+
+            products = fileUtil.findPossibleEntries(DATABASE_PATH, 1, pattern, constructProduct);
+
+        } catch (ShopEntryNotFoundException e) {
+            OutputFrame.printAlert("NO PRODUCTS FOUND.");
+        }
+        return products;
     }
 
-    public ArrayList<Product> findPossibleProductsByName(String pattern) throws ShopEntryNotFoundException {
-        return fileUtil.findPossibleEntries(DATABASE_PATH, 2, pattern, constructProduct);
+    public ArrayList<Product> findPossibleProductsByName(String pattern) {
+        ArrayList<Product> products = new ArrayList<>();
+        try {
+
+            products = fileUtil.findPossibleEntries(DATABASE_PATH, 2, pattern, constructProduct);
+
+        } catch (ShopEntryNotFoundException e) {
+            OutputFrame.printAlert("NO PRODUCTS FOUND.");
+        }
+        return products;
     }
 
-    public ArrayList<Product> findPossibleProductsByDescription(String pattern) throws ShopEntryNotFoundException {
-        return fileUtil.findPossibleEntries(DATABASE_PATH, 3, pattern, constructProduct);
+    public ArrayList<Product> findPossibleProductsByDescription(String pattern) {
+        ArrayList<Product> products = new ArrayList<>();
+        try {
+
+            return fileUtil.findPossibleEntries(DATABASE_PATH, 3, pattern, constructProduct);
+
+        } catch (ShopEntryNotFoundException e) {
+            OutputFrame.printAlert("NO PRODUCTS FOUND.");
+        }
+        return products;
     }
 }

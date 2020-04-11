@@ -18,8 +18,6 @@ import static java.lang.Integer.parseInt;
  */
 public class UserDAO {
 
-    //TODO: Catch ShopEntryNotFoundExceptions here.
-
     /**
      * Every DAO class stores the paths ({@code String}) to its corresponding database and sequence .txt files and keeps
      * a reference to the {@code FileUtil} class, to access its methods.
@@ -30,7 +28,7 @@ public class UserDAO {
     private FileUtil<User> fileUtil = new FileUtil<>();
 
     /**
-     * In order to convert lines of text to Product objects, a {@code constructUser} lambda function is defined.
+     * In order to convert lines of text to User objects, a {@code constructUser} lambda function is defined.
      */
     Function<String[], User> constructUser = (line) -> {
 
@@ -60,28 +58,64 @@ public class UserDAO {
         }
     }
 
-    public void updateUser(User targetUser, User newUser) throws ShopEntryNotFoundException {
-        fileUtil.updateEntry(DATABASE_PATH, targetUser, newUser, constructUser);
+    public void updateUser(User targetUser, User newUser) {
+        try {
+
+            fileUtil.updateEntry(DATABASE_PATH, targetUser, newUser, constructUser);
+
+        } catch (ShopEntryNotFoundException e) {
+            OutputFrame.printAlert("USER NOT FOUND.");
+        }
     }
 
-    public void removeUser(User targetUser) throws ShopEntryNotFoundException {
-        fileUtil.removeEntry(DATABASE_PATH, targetUser, constructUser);
+    public void removeUser(User targetUser) {
+        try {
+
+            fileUtil.removeEntry(DATABASE_PATH, targetUser, constructUser);
+
+        } catch (ShopEntryNotFoundException e) {
+            OutputFrame.printAlert("USER NOT FOUND.");
+        }
     }
 
     /**
      * Methods that read the User database:
      */
 
-    public ArrayList<User> getAllUsers() throws ShopEntryNotFoundException {
-        return fileUtil.getAllEntries(DATABASE_PATH, constructUser);
+    public ArrayList<User> getAllUsers() {
+        ArrayList<User> users = new ArrayList<>();
+        try {
+
+            return fileUtil.getAllEntries(DATABASE_PATH, constructUser);
+
+        } catch (ShopEntryNotFoundException e) {
+            OutputFrame.printAlert("NO USERS FOUND.");
+        }
+        return users;
     }
 
-    public User findUserByID(int ID) throws ShopEntryNotFoundException {
-        return fileUtil.findFirstEntryByProperty(DATABASE_PATH, 0, String.valueOf(ID), constructUser);
+    public User findUserByID(int ID) {
+        User user = null;
+        try {
+
+            user = fileUtil.findFirstEntryByProperty(DATABASE_PATH, 0, String.valueOf(ID), constructUser);
+
+        } catch (ShopEntryNotFoundException e) {
+            OutputFrame.printAlert("USER NOT FOUND.");
+        }
+        return user;
     }
 
-    public User findUserByEmail(String email) throws ShopEntryNotFoundException {
-        return fileUtil.findFirstEntryByProperty(DATABASE_PATH, 2, email, constructUser);
+    public User findUserByEmail(String email) {
+        User user = null;
+        try {
+
+            user = fileUtil.findFirstEntryByProperty(DATABASE_PATH, 2, email, constructUser);
+
+        } catch (ShopEntryNotFoundException e) {
+            OutputFrame.printAlert("USER NOT FOUND.");
+        }
+        return user;
     }
 
     private User.Role stringToRole(String string) {

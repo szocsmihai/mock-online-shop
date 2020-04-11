@@ -1,7 +1,5 @@
 package ro.iteahome.shop.ui;
 
-import ro.iteahome.shop.exceptions.business.ShopEntryNotFoundException;
-import ro.iteahome.shop.exceptions.technical.ShopFileNotFoundException;
 import ro.iteahome.shop.security.UserContext;
 import ro.iteahome.shop.service.UserService;
 import ro.iteahome.shop.ui.popups.InputFrame;
@@ -19,29 +17,23 @@ public class ShopperGetDeliveryDetailsUI {
     }
 
     private void showGetValidDeliveryDetails() {
-        try {
+        String email = UserContext.getLoggedInUser().getEmail();
+        String password = UserContext.getLoggedInUser().getPassword();
 
-            String email = UserContext.getLoggedInUser().getEmail();
-            String password = UserContext.getLoggedInUser().getPassword();
-
-            String firstName = showGetFirstName();
-            if (firstName != null) {
-                String lastName = showGetLastName();
-                if (lastName != null) {
-                    String fullName = firstName + ", " + lastName;
-                    String phoneNo = showGetPhoneNo();
-                    if (phoneNo != null) {
-                        String deliveryAddress = showGetDeliveryAddress();
-                        if (deliveryAddress != null) {
-                            userService.updateUserInfo(email, email, password, fullName, phoneNo, deliveryAddress);
-                            userService.logIn(email, password);
-                        }
+        String firstName = showGetFirstName();
+        if (firstName != null) {
+            String lastName = showGetLastName();
+            if (lastName != null) {
+                String fullName = firstName + ", " + lastName;
+                String phoneNo = showGetPhoneNo();
+                if (phoneNo != null) {
+                    String deliveryAddress = showGetDeliveryAddress();
+                    if (deliveryAddress != null) {
+                        userService.updateUserInfo(email, email, password, fullName, phoneNo, deliveryAddress);
+                        userService.logIn(email, password);
                     }
                 }
             }
-
-        } catch (ShopFileNotFoundException | ShopEntryNotFoundException e) {
-            e.printStackTrace();
         }
     }
 

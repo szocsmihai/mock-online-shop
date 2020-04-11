@@ -1,7 +1,5 @@
 package ro.iteahome.shop.ui;
 
-import ro.iteahome.shop.exceptions.business.ShopEntryNotFoundException;
-import ro.iteahome.shop.exceptions.technical.ShopFileNotFoundException;
 import ro.iteahome.shop.model.Product;
 import ro.iteahome.shop.service.CartService;
 import ro.iteahome.shop.service.ProductService;
@@ -66,18 +64,12 @@ public abstract class ShopperGetProductsUI extends LoopUI {
     }
 
     private void showSelectQuantity() {
-        try {
-
-            String userInput = InputFrame.getInputFromPrompt("ENTER DESIRED QUANTITY FOR \"" + selectedProduct.getName() + "\" (0 : CANCEL):");
-            while (!userInput.equals("0") && (!userInput.matches("\\d+") || !cartService.canExtraQuantityBeAdded(String.valueOf(selectedProduct.getID()), userInput))) {
-                userInput = InputFrame.getInputFromAlert("INVALID INPUT OR INSUFFICIENT STOCK. TRY AGAIN (0 : CANCEL):");
-            }
-            if (!userInput.equals("0")) {
-                selectedQuantity = userInput;
-            }
-
-        } catch (ShopFileNotFoundException | ShopEntryNotFoundException e) {
-            e.printStackTrace();
+        String userInput = InputFrame.getInputFromPrompt("ENTER DESIRED QUANTITY FOR \"" + selectedProduct.getName() + "\" (0 : CANCEL):");
+        while (!userInput.equals("0") && (!userInput.matches("\\d+") || !cartService.canExtraQuantityBeAdded(String.valueOf(selectedProduct.getID()), userInput))) {
+            userInput = InputFrame.getInputFromAlert("INVALID INPUT OR INSUFFICIENT STOCK. TRY AGAIN (0 : CANCEL):");
+        }
+        if (!userInput.equals("0")) {
+            selectedQuantity = userInput;
         }
     }
 

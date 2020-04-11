@@ -1,7 +1,5 @@
 package ro.iteahome.shop.ui;
 
-import ro.iteahome.shop.exceptions.business.ShopEntryNotFoundException;
-import ro.iteahome.shop.exceptions.technical.ShopFileNotFoundException;
 import ro.iteahome.shop.model.Product;
 import ro.iteahome.shop.ui.options.UIOption;
 import ro.iteahome.shop.ui.popups.InputFrame;
@@ -56,16 +54,8 @@ public class ShopperBrowseProductsUI extends ShopperGetProductsUI {
 
     private void showAllCategories() {
         OutputFrame.printInfo("AVAILABLE PRODUCT CATEGORIES:");
-        try {
-
-            allCategories = productService.getNumberedCategories();
-            OutputFrame.printMapPairs(allCategories);
-
-        } catch (ShopEntryNotFoundException e) {
-            OutputFrame.printAlert("NO CATEGORIES AVAILABLE...");
-        } catch (ShopFileNotFoundException e) {
-            e.printStackTrace();
-        }
+        allCategories = productService.getNumberedCategories();
+        OutputFrame.printMapPairs(allCategories);
     }
 
     private void showSelectCategory() {
@@ -79,37 +69,25 @@ public class ShopperBrowseProductsUI extends ShopperGetProductsUI {
     }
 
     private void showProductsOfCategory() {
-        try {
-
-            for (Map.Entry<Integer, String> pair : allCategories.entrySet()) {
-                if (parseInt(selectedCategory) == pair.getKey()) {
-                    ArrayList<Product> resultsByCategory = productService.findProductsByCategory(pair.getValue());
-                    OutputFrame.printConfirmation("PRODUCTS IN SELECTED CATEGORY:");
-                    productService.outputProductList(resultsByCategory);
-                    displayedProducts.addAll(resultsByCategory);
-                    break;
-                }
+        for (Map.Entry<Integer, String> pair : allCategories.entrySet()) {
+            if (parseInt(selectedCategory) == pair.getKey()) {
+                ArrayList<Product> resultsByCategory = productService.findProductsByCategory(pair.getValue());
+                OutputFrame.printConfirmation("PRODUCTS IN SELECTED CATEGORY:");
+                productService.outputProductList(resultsByCategory);
+                displayedProducts.addAll(resultsByCategory);
+                break;
             }
-
-        } catch (ShopFileNotFoundException | ShopEntryNotFoundException e) {
-            e.printStackTrace();
         }
     }
 
     private void showPopularProducts() {
-        try {
-
-            ArrayList<Product> popularProducts = productService.getPopularProducts();
-            if (popularProducts.size() != 0) {
-                OutputFrame.printInfo("TOP 3 BEST-SELLING PRODUCTS:");
-                productService.outputProductList(popularProducts);
-                displayedProducts.addAll(popularProducts);
-            } else {
-                OutputFrame.printInfo("NOT ENOUGH PRODUCTS HAVE BEEN SOLD YET.");
-            }
-
-        } catch (ShopFileNotFoundException | ShopEntryNotFoundException e) {
-            e.printStackTrace();
+        ArrayList<Product> popularProducts = productService.getPopularProducts();
+        if (popularProducts.size() != 0) {
+            OutputFrame.printInfo("TOP 3 BEST-SELLING PRODUCTS:");
+            productService.outputProductList(popularProducts);
+            displayedProducts.addAll(popularProducts);
+        } else {
+            OutputFrame.printInfo("NOT ENOUGH PRODUCTS HAVE BEEN SOLD YET.");
         }
     }
 
